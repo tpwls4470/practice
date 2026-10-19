@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나만의 옷장 - 등록</title>
+  <style>
+    :root{
+      --bg:#f7f6f3;
+      --card:#ffffff;
+      --line:#e5e3de;
+      --line-2:#d9d5cf;
+      --text:#1f1f1d;
+      --muted:#7a7772;
+      --muted-2:#a9a59e;
+      --soft:#f0efeb;
+      --soft-2:#f8f7f4;
+      --selected:#ece9e4;
+      --selected-border:#d8d4cd;
+      --accent:#ee9a36;
+      --accent-soft:#fff2e2;
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --shadow:0 10px 24px rgba(26, 25, 23, 0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh}
+    button,input{font:inherit}
+    .app{max-width:680px;margin:0 auto;padding:20px 16px 120px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .title{font-size:24px;font-weight:800;letter-spacing:-0.03em}
+
+    .section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);padding:20px;margin-top:14px;box-shadow:var(--shadow)}
+    .section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .index{width:30px;height:30px;border-radius:999px;display:grid;place-items:center;background:#f2f0ec;border:1px solid var(--line);font-size:13px;font-weight:800}
+    .section-title{font-size:18px;font-weight:800;letter-spacing:-0.02em}
+    .section-sub{font-size:12px;color:var(--muted)}
+
+    .upload-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .small-pill{height:42px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:700;color:#46423d;display:inline-flex;align-items:center;gap:8px}
+    .upload-area{position:relative;border:3px dashed #cfcfcf;background:#fbfbfa;border-radius:28px;min-height:300px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:.18s ease}
+    .upload-area:hover{border-color:#bbbbbb;background:#f8f8f6}
+    .upload-icon{width:84px;height:84px;border-radius:999px;background:#ededeb;display:grid;place-items:center;font-size:34px;color:#787878;margin-bottom:16px}
+    .upload-title{font-size:18px;font-weight:700;color:#4b4b49}
+    .upload-desc{margin-top:8px;font-size:13px;color:var(--muted)}
+    .preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+    .preview-card{border-radius:18px;overflow:hidden;background:#f0efec;border:1px solid var(--line);aspect-ratio:1/1;position:relative}
+    .preview-card img{width:100%;height:100%;object-fit:cover}
+    .preview-name{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(255,255,255,.92);padding:7px 8px;border-radius:10px;font-size:11px;color:#53504b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    input[type=file]{display:none}
+
+    .chip-row{display:flex;flex-wrap:wrap;gap:10px}
+    #mainCategoryRow{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding:3px 0 9px;gap:8px;-webkit-overflow-scrolling:touch}
+    #mainCategoryRow .chip{flex:0 0 auto;padding:0 12px;font-size:13px;white-space:nowrap}
+    .chip{height:40px;border-radius:999px;border:1px solid var(--line);background:#fff;padding:0 14px;font-size:14px;font-weight:700;color:#4f4b46;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:.18s ease}
+    .chip:hover{border-color:var(--line-2);background:#faf9f7}
+    .chip.active{background:var(--selected);border-color:var(--selected-border);color:var(--text)}
+    .chip.plus{background:#faf9f7;border-style:dashed;color:#5f5a54}
+    .chip.plus span{font-size:17px;line-height:1}
+
+    .nested-box{margin-top:14px;background:#fcfbf9;border:1px solid var(--line);border-radius:20px;padding:14px}
+    .nested-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .nested-title{font-size:13px;font-weight:800;color:#817b73}
+    .selection-pill{height:28px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:#f5f3ef;color:#4e4841;font-size:12px;font-weight:700;display:flex;align-items:center}
+
+    .warmth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .warmth-btn{padding:16px 12px;border:1px solid var(--line);border-radius:18px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.18s ease}
+    .warmth-btn.active{background:var(--selected);border-color:var(--selected-border)}
+    .warmth-icon{font-size:24px;line-height:1}
+    .warmth-label{font-size:15px;font-weight:800}
+
+    .collapse{overflow:hidden;max-height:0;opacity:0;transition:max-height .28s ease, opacity .2s ease, margin-top .28s ease;margin-top:0}
+    .collapse.open{max-height:500px;opacity:1;margin-top:14px}
+    .detail-panel{background:#faf9f6;border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:16px}
+    .detail-title{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .detail-title .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+    .mini-row{display:flex;flex-wrap:wrap;gap:8px}
+    .mini-chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:700;color:#5a554e;cursor:pointer}
+    .mini-chip.active{background:var(--selected);border-color:var(--selected-border);color:var(--text)}
+
+    .thickness-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .thickness-card{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;transition:.18s ease}
+    .thickness-card.active{background:var(--selected);border-color:var(--selected-border)}
+    .thickness-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+    .thickness-name{font-size:14px;font-weight:800}
+    .thickness-en{font-size:11px;color:var(--muted)}
+    .progress-track{height:8px;border-radius:999px;background:#dfddd9;overflow:hidden}
+    .progress-fill{height:100%;border-radius:999px;background:#94908a;width:33%}
+
+    .thickness-slider-box{background:#faf9f7;border:1px solid var(--line);border-radius:18px;padding:18px 18px 14px}
+    .thickness-value{text-align:center;font-size:14px;font-weight:700;margin-bottom:16px;color:#343331}
+    .thickness-value span{color:#adaaa6;font-size:17px;font-weight:400;padding-left:2px}
+    .thickness-range{--fill:50%;display:block;width:100%;appearance:none;-webkit-appearance:none;height:11px;border:1px solid #dbdcde;border-radius:99px;outline:none;cursor:pointer;background:linear-gradient(to right,#a2a09d 0%,#a2a09d var(--fill),#e6e5e3 var(--fill),#e6e5e3 100%)}
+    .thickness-range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #d3d1cd;box-shadow:0 2px 6px rgba(0,0,0,.11)}
+    .thickness-range::-moz-range-thumb{width:25px;height:25px;border-radius:50%;background:#fff;border:1px solid #d3d1cd;box-shadow:0 2px 6px rgba(0,0,0,.11)}
+    .thickness-labels{display:flex;justify-content:space-between;margin-top:18px;color:#92908d;font-size:12px}
+    .season-row{display:flex;gap:10px;flex-wrap:wrap}
+    .season-pill{height:44px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#35322f;font-size:14px;font-weight:800;cursor:pointer;transition:.18s ease}
+    .season-pill.active{background:var(--selected);border-color:var(--selected-border)}
+
+    .color-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .color-current{font-size:14px;font-weight:800;color:#56514b}
+    .color-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));column-gap:16px;row-gap:23px;justify-items:center;align-items:start}
+    .color-chip{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:9px;background:none;border:none;padding:0;cursor:pointer;width:100%;min-width:0;text-align:center}
+    .swatch{width:54px;height:54px;flex:0 0 54px;border-radius:999px;border:2px solid transparent;display:grid;place-items:center;position:relative;transition:.18s ease}
+    .color-chip.active .swatch{border-color:#bbb6af;box-shadow:0 0 0 4px #f1efeb}
+    .color-chip .label{font-size:12px;font-weight:700;color:#69645d;line-height:1.45;text-align:center;width:100%}
+    .color-chip.active .label{color:#1f1f1d}
+    .check{font-size:22px;font-weight:900;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.2)}
+    .swatch.white{border-color:#dbd7d0;background:#fafafa}
+    .multicolor{background:conic-gradient(from 180deg, #ff6b6b, #ffb347, #ffe56b, #61d48f, #68b8ff, #8c7dff, #ff84d8, #ff6b6b);}
+
+
+    .pattern-box{display:none;margin-top:14px;background:#faf9f6;border:1px solid var(--line);border-radius:20px;padding:14px}
+    .pattern-title{font-size:13px;font-weight:800;margin-bottom:10px}
+    .pattern-row{display:flex;flex-wrap:wrap;gap:10px}
+    .pattern-chip{height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:700;color:#555149;cursor:pointer}
+    .pattern-chip.active{background:var(--selected);border-color:var(--selected-border);color:var(--text)}
+
+    .footer-save{position:sticky;bottom:0;padding-top:18px;background:linear-gradient(to top,var(--bg) 80%,rgba(247,246,243,0));margin-top:18px}
+    .save-btn{width:100%;height:56px;border:none;border-radius:999px;background:var(--accent);color:#fff;font-size:15px;font-weight:800;letter-spacing:-0.01em;cursor:pointer}
+
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#262421;color:#fff;padding:12px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.18s ease;max-width:90vw;text-align:center;z-index:20}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+    @media (max-width:560px){
+      .app{padding:16px 14px 110px}
+      .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .color-grid{grid-template-columns:repeat(4,minmax(0,1fr));column-gap:14px;row-gap:24px}
+      .swatch{width:50px;height:50px;flex-basis:50px}
+      .warmth-grid,.thickness-row{grid-template-columns:1fr}
+    }
+
+    /* v6: keep all option rows strictly within their parent cards */
+    #tpoRow,#mainCategoryRow,#subCategoryRow,#liningRow,#seasonRow{
+      display:flex;flex-wrap:wrap;overflow:visible;max-width:100%;width:100%;
+      box-sizing:border-box;gap:8px;justify-content:flex-start;align-content:flex-start;
+      padding:0;margin:0;scrollbar-width:none;
+    }
+    #mainCategoryRow .chip,.chip,.mini-chip,.season-pill{flex:0 0 auto;white-space:nowrap;max-width:100%}
+    #mainCategoryRow .chip{font-size:12.5px;padding:0 11px;height:37px}
+    #tpoRow .chip{padding:0 12px;font-size:13px;height:38px}
+    #subCategoryRow .chip{font-size:12.5px;padding:0 11px;height:36px}
+    .nested-box{min-width:0;max-width:100%}
+    .warmth-icon{font-size:18px;line-height:1.2;min-height:22px;display:grid;place-items:center}
+    .warmth-btn{gap:5px;padding:13px 10px}
+    .color-grid{grid-template-columns:repeat(5,minmax(0,1fr));column-gap:16px;row-gap:22px;width:100%}
+    .color-chip{display:flex;align-items:center;justify-content:flex-start;min-width:0;width:100%}
+    .swatch{overflow:hidden;isolation:isolate;box-sizing:border-box;border-radius:50%;aspect-ratio:1/1}
+    .swatch.multicolor{background:conic-gradient(#ff697a 0deg 42deg,#ffac47 42deg 84deg,#ffde5e 84deg 126deg,#4cce81 126deg 168deg,#3aa6ee 168deg 210deg,#7169db 210deg 252deg,#d46fdf 252deg 294deg,#ff697a 294deg 360deg);border:0!important;box-shadow:none}
+    .color-chip.active .swatch.multicolor{outline:3px solid #bbb6af;outline-offset:3px;box-shadow:none}
+    @media (max-width:560px){
+      .color-grid{grid-template-columns:repeat(5,minmax(0,1fr));column-gap:7px;row-gap:22px}
+      .swatch{width:min(52px,100%);height:auto;flex:0 0 auto}
+      .color-chip{gap:8px}
+      #mainCategoryRow .chip{padding:0 10px;font-size:12px}
+    }
+    /* v7: small tailored wind pictogram and neutral thickness control */
+    .wind-mark{width:31px;height:24px;display:block}
+    .warmth-icon{min-height:25px;display:flex;align-items:center;justify-content:center}
+    .thickness-range:focus-visible{outline:2px solid #8c8984;outline-offset:5px}
+    #thicknessSection[hidden]{display:none!important}
+    /* v9: 사진 섹션 - 참고 화면의 버튼과 점선 영역 */
+    .photo-action-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex-wrap:nowrap;margin-bottom:14px}
+    .photo-action{height:48px;justify-content:center;white-space:nowrap;font-size:13px;padding:0 10px;border-radius:999px}
+    .photo-action-icon{font-size:21px;line-height:1;color:#4b4b49}
+    .photo-action:nth-child(2){background:#eae9e5;border-color:#eae9e5;color:#2e2d2b}
+    .upload-area{border:3px dashed #c7c9c9;background:#fff;border-radius:27px;min-height:330px;padding:28px}
+    .upload-area:hover{background:#fbfbfa;border-color:#aeb1b1}
+    .upload-icon{width:76px;height:76px;border-radius:50%;margin-bottom:17px;background:#eae9e7;color:#44484a;display:grid;place-items:center}
+    .upload-title{font-size:16px;font-weight:650;color:#555}
+    .thickness-slider-box{padding-top:22px}
+    @media(max-width:380px){.photo-action{font-size:12px;padding:0 6px}}
+
+    /* Figma reference image layout — original interactions retained */
+    :root{--bg:#f7f6f4;--line:#e9e8e5;--selected:#eae9e6;--selected-border:#e1dfdc;--accent:#a12fe0;--shadow:0 3px 12px rgba(0,0,0,.025)}
+    .app{width:calc(100% - 32px);max-width:336px;padding:8px 0 48px}
+    .topbar{margin-bottom:8px}
+    .title{font-size:12px;font-weight:800;letter-spacing:-.3px}
+    .section{border-radius:15px;padding:10px;margin-top:8px;box-shadow:var(--shadow)}
+    .section-head{margin-bottom:8px;gap:6px}
+    .title-row{gap:6px}
+    .index{height:16px;width:16px;font-size:8px;background:#f1f0ee;border:0}
+    .section-title{font-size:10px;letter-spacing:-.15px}
+    .section-sub{font-size:7px;color:#b4b2af}
+    .upload-area{min-height:172px;height:172px;border:1.5px dashed #cbcdcd;border-radius:15px;padding:12px;background:#fff}
+    .upload-icon{width:40px;height:40px;margin-bottom:8px;background:#ebebeb}
+    .upload-icon svg{width:21px;height:21px}
+    .upload-title{font-size:9px;font-weight:600;color:#333}
+    .photo-action-row{margin:9px 0 4px;grid-template-columns:1fr 1fr;gap:6px}
+    .photo-action{height:26px;font-size:8px;padding:0 5px;gap:5px;font-weight:650}
+    .photo-action-icon{font-size:11px}
+    .chip-row{gap:6px}
+    #tpoRow,#mainCategoryRow,#subCategoryRow,#liningRow,#seasonRow{gap:6px}
+    .chip,#tpoRow .chip,#mainCategoryRow .chip,#subCategoryRow .chip{height:21px;font-size:8px;padding:0 9px;gap:4px;font-weight:700}
+    #tpoRow{flex-wrap:nowrap;gap:5px;overflow-x:auto;scrollbar-width:none}
+    #tpoRow .chip{flex-shrink:0;padding:0 8px;font-size:7px}
+    #tpoRow .chip span:first-child{font-size:8px}
+    .chip.plus{border-style:solid;background:#fff}
+    .chip.plus span{font-size:11px}
+    .nested-box{margin-top:7px;padding:6px;border-radius:12px;background:#faf9f7;overflow:hidden;max-height:140px;opacity:1;transition:max-height .3s ease,opacity .24s ease,padding .3s ease,margin .3s ease,border-width .3s ease}
+    .nested-box.is-closed{max-height:0;padding-top:0;padding-bottom:0;margin-top:0;opacity:0;border-width:0}
+    #subCategoryRow{gap:6px}
+    .warmth-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+    .warmth-btn{height:41px;border-radius:10px;padding:4px;gap:1px}
+    .warmth-btn:first-child:not(.active){background:#f6f6f6}
+    .warmth-icon{font-size:12px;min-height:18px;height:18px}
+    .wind-mark{width:19px;height:15px}
+    .warmth-label{font-size:9px}
+    .section:nth-of-type(3) > div[style]{margin-top:9px!important}
+    .section:nth-of-type(3) > div[style] .title-row{margin-bottom:6px!important}
+    .section:nth-of-type(3) > div[style] .section-title{font-size:10px!important}
+    .season-row{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px!important}
+    .season-pill{height:23px;padding:0 3px;font-size:8px;font-weight:700}
+    .color-grid{grid-template-columns:repeat(5,minmax(0,1fr));column-gap:8px;row-gap:12px}
+    .color-chip{gap:4px}
+    .swatch{width:29px;height:29px;flex:0 0 29px;border-width:1px}
+    .color-chip.active .swatch{box-shadow:0 0 0 2px #f1efed;border-color:#d7d4d0}
+    .color-chip .label{font-size:7px;line-height:1.2}
+    .check{font-size:15px}
+    .footer-save{margin-top:9px;padding-top:0;background:none;bottom:10px}
+    .save-btn{height:29px;background:#9d32dc;font-size:9px}
+    .collapse.open{max-height:400px;margin-top:8px}
+    .detail-panel{padding:10px;gap:8px;border-radius:11px}
+    .detail-title{font-size:9px}
+    .mini-chip{height:25px;font-size:9px;padding:0 10px}
+    .thickness-slider-box{padding:15px 12px 10px}
+    .thickness-labels{font-size:9px}
+    .pattern-box{border-radius:12px}
+    .preview-grid{gap:6px;margin-top:8px;grid-template-columns:repeat(3,minmax(0,1fr))}
+    .preview-card{border-radius:10px}
+    @media(max-width:560px){
+      .app{width:calc(100% - 32px);max-width:336px;padding:8px 0 48px}
+      .color-grid{grid-template-columns:repeat(5,minmax(0,1fr));column-gap:8px;row-gap:12px}
+      .swatch{width:29px;height:29px;flex:0 0 29px}
+      .warmth-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      #mainCategoryRow .chip{font-size:8px;padding:0 9px}
+      .photo-action{font-size:8px}
+    }
+    #mainCategoryRow,#subCategoryRow{gap:4px!important}
+    #mainCategoryRow .chip,#subCategoryRow .chip{height:21px;padding:0 6px;font-size:7px}
+    #mainCategoryRow .chip.plus{padding:0 6px}
+    @media(max-width:355px){
+      .app{width:calc(100% - 22px)}
+      #mainCategoryRow .chip{padding:0 7px;font-size:7px}
+      #tpoRow .chip{padding:0 6px;font-size:7px}
+      .color-grid{column-gap:3px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="title">나만의 옷장</div>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="title-row">
+          <div class="index">1</div>
+          <div class="section-title">사진</div>
+          <div class="section-sub">필수</div>
+        </div>
+      </div>
+
+      <label class="upload-area" for="photoInput" id="uploadArea">
+        <span class="upload-icon" aria-hidden="true"><svg width="39" height="39" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h4l1.5-2h5L16 7h4a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/></svg></span>
+        <div class="upload-title">탭해서 사진 추가</div>
+      </label>
+      <div class="upload-tools photo-action-row">
+        <button type="button" class="small-pill photo-action" id="galleryBtn"><span class="photo-action-icon">▧</span> 갤러리 / 카메라</button>
+        <button type="button" class="small-pill photo-action" id="linkImportBtn"><span class="photo-action-icon">◎</span> 온라인 검색</button>
+      </div>
+      <input id="photoInput" type="file" accept="image/*" multiple>
+      <div class="preview-grid" id="previewGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="title-row">
+          <div class="index">2</div>
+          <div class="section-title">종류</div>
+        </div>
+      </div>
+      <div class="chip-row" id="tpoRow"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="title-row">
+          <div class="index">3</div>
+          <div class="section-title">세부 카테고리</div>
+        </div>
+      </div>
+
+      <div class="chip-row" id="mainCategoryRow"></div>
+
+      <div class="nested-box">
+        <div class="chip-row" id="subCategoryRow"></div>
+      </div>
+
+      <div style="margin-top:18px">
+        <div class="title-row" style="margin-bottom:12px">
+          <div class="section-title" style="font-size:16px">보온성</div>
+        </div>
+        <div class="warmth-grid" id="warmthGrid"></div>
+        <div class="collapse" id="warmthDetails">
+          <div class="detail-panel">
+            <div>
+              <div class="detail-title"><span class="dot"></span> 안감 종류</div>
+              <div class="mini-row" id="liningRow"></div>
+            </div>
+            <div id="thicknessSection" hidden>
+              <div class="detail-title"><span class="dot"></span> 두께</div>
+              <div class="thickness-slider-box">
+                <input aria-label="두께 조절" id="thicknessRange" class="thickness-range" type="range" min="0" max="2" step="1" value="1">
+                <div class="thickness-labels"><span>얇음</span><span>중간</span><span>도톰</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div class="title-row">
+          <div class="index">4</div>
+          <div class="section-title">계절</div>
+        </div>
+      </div>
+      <div class="season-row" id="seasonRow"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="title-row">
+            <div class="index">5</div>
+            <div class="section-title">색상</div>
+          </div>
+        </div>
+      </div>
+      <div class="color-grid" id="colorGrid"></div>
+      <div class="pattern-box" id="patternBox">
+        <div class="pattern-title">기타 패턴 선택</div>
+        <div class="pattern-row" id="patternRow"></div>
+      </div>
+    </section>
+
+    <div class="footer-save">
+      <button class="save-btn" id="saveBtn" type="button">내 옷장에 저장</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const state = {
+      photos: [],
+      tpo: new Set(['데일리']),
+      mainCategory: '상의',
+      subCategory: '셔츠',
+      warmth: null,
+      lining: '없음',
+      thickness: null,
+      seasons: new Set(['봄','가을']),
+      color: '빨강',
+      pattern: '무지'
+    };
+
+    const categoryMap = {
+      '상의':['티셔츠','셔츠','블라우스','니트','맨투맨/후디','슬리브리스'],
+      '하의':['데님','슬랙스','쇼츠','스커트','레깅스','조거팬츠'],
+      '아우터':['자켓','가디건','코트','패딩','집업','바람막이'],
+      '세트/한벌':['셋업','트레이닝 세트','투피스','점프수트','원피스'],
+      '신발':['운동화','로퍼','부츠','샌들','슬리퍼','힐'],
+      '가방':['숄더백','백팩','토트백','크로스백','클러치'],
+      '액세서리':['모자','머플러','벨트','장갑','주얼리']
+    };
+
+    const mainCategories = ['상의','하의','아우터','세트/한벌','신발','가방','액세서리'];
+    const tpoItems = [
+      ['데일리','☕'],['데이트','💗'],['운동','🏃'],['여행','✈️'],['격식','✨']
+    ];
+    const warmthItems = [
+      ['약함','wind'],['보통','🌱'],['높음','🔥']
+    ];
+    const liningItems = ['없음','기모','융털','메시'];
+    const thicknessItems = [
+      ['얇음','Light',33],['중간','Medium',66],['도톰','High',100]
+    ];
+    const seasonItems = ['봄','여름','가을','겨울','사계절'];
+    const colorItems = [
+      ['빨강','#ff5b64'],['주황','#ff972f'],['노랑','#f5ca10'],['초록','#39c353'],['파랑','#1e88e5'],['보라','#9b71d1'],['흰색','#ffffff'],['검정','#343434'],['회색','#aaaeb3'],['기타','multicolor']
+    ];
+    const patternItems = ['스트라이프','체크','도트','그래픽','플라워','배색'];
+
+    const previewGrid = document.getElementById('previewGrid');
+    const photoInput = document.getElementById('photoInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(()=>toast.classList.remove('show'), 1800);
+    }
+
+    function toggleInSet(set, value){
+      if(set.has(value)) set.delete(value); else set.add(value);
+    }
+
+    function renderPreviews(){
+      previewGrid.innerHTML = '';
+      state.photos.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'preview-card';
+        card.innerHTML = `<img src="${item.src}" alt="${item.name}"><div class="preview-name">${item.name}</div>`;
+        previewGrid.appendChild(card);
+      });
+    }
+
+    function handleFiles(files){
+      [...files].forEach(file => {
+        state.photos.push({name:file.name, src:URL.createObjectURL(file)});
+      });
+      renderPreviews();
+      showToast(`${files.length}장 추가했어요`);
+    }
+
+    document.getElementById('galleryBtn').addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', e => {
+      if(e.target.files?.length) handleFiles(e.target.files);
+      e.target.value='';
+    });
+
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#bdbdbd';
+      uploadArea.style.background = '#f8f8f6';
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = '#cfcfcf';
+      uploadArea.style.background = '#fbfbfa';
+    });
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#cfcfcf';
+      uploadArea.style.background = '#fbfbfa';
+      if(e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
+    });
+
+    document.getElementById('linkImportBtn').addEventListener('click', () => {
+      const url = prompt('이미지 링크를 붙여넣어 주세요.');
+      if(!url) return;
+      state.photos.push({name:'링크 이미지', src:url});
+      renderPreviews();
+      showToast('링크 이미지를 추가했어요');
+    });
+
+    function renderTpo(){
+      const row = document.getElementById('tpoRow');
+      row.innerHTML = '';
+      tpoItems.forEach(([label, icon]) => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (state.tpo.has(label) ? ' active' : '');
+        btn.type = 'button';
+        btn.innerHTML = `<span>${icon}</span><span>${label}</span>`;
+        btn.onclick = () => { toggleInSet(state.tpo, label); renderTpo(); };
+        row.appendChild(btn);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'chip plus';
+      addBtn.type = 'button';
+      addBtn.innerHTML = '<span>+</span> 직접 추가';
+      addBtn.onclick = () => {
+        const value = prompt('추가할 종류 이름을 입력해 주세요.');
+        if(!value) return;
+        tpoItems.push([value.trim(), '＋']);
+        state.tpo.add(value.trim());
+        renderTpo();
+        showToast('종류를 추가했어요');
+      };
+      row.appendChild(addBtn);
+    }
+
+    function renderMainCategories(){
+      const row = document.getElementById('mainCategoryRow');
+      row.innerHTML = '';
+      mainCategories.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (state.mainCategory === label ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.onclick = () => {
+          if(state.mainCategory === label) {
+            state.mainCategory = null;
+            state.subCategory = null;
+          } else {
+            state.mainCategory = label;
+            state.subCategory = categoryMap[label][0] || null;
+          }
+          renderMainCategories();
+          renderSubCategories();
+        };
+        row.appendChild(btn);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'chip plus';
+      addBtn.type = 'button';
+      addBtn.innerHTML = '<span>+</span> 직접 추가';
+      addBtn.onclick = () => {
+        const value = prompt('추가할 대분류 이름을 입력해 주세요.');
+        if(!value) return;
+        const trimmed = value.trim();
+        if(!trimmed) return;
+        mainCategories.push(trimmed);
+        categoryMap[trimmed] = ['직접 입력'];
+        state.mainCategory = trimmed;
+        state.subCategory = '직접 입력';
+        renderMainCategories();
+        renderSubCategories();
+        showToast('대분류를 추가했어요');
+      };
+      row.appendChild(addBtn);
+    }
+
+    function renderSubCategories(){
+      const row = document.getElementById('subCategoryRow');
+      row.innerHTML = '';
+      document.querySelector('.nested-box').classList.toggle('is-closed', !state.mainCategory);
+      (categoryMap[state.mainCategory] || []).forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (state.subCategory === label ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.onclick = () => {
+          state.subCategory = state.subCategory === label ? null : label;
+          renderSubCategories();
+        };
+        row.appendChild(btn);
+      });
+    }
+
+    function renderWarmth(){
+      const grid = document.getElementById('warmthGrid');
+      grid.innerHTML = '';
+      warmthItems.forEach(([label, icon]) => {
+        const btn = document.createElement('button');
+        btn.className = 'warmth-btn' + (state.warmth === label ? ' active' : '');
+        btn.type = 'button';
+        const iconMarkup = icon === 'wind'
+          ? `<svg class="wind-mark" viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 13h24c7 0 9-10 2-10-4 0-6 2-7 5M3 22h39c8 0 9-11 2-11-4 0-6 2-7 5M9 31h22c7 0 10 8 5 8-3 0-5-2-5-4" stroke="#43a9d4" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+          : icon;
+        btn.innerHTML = `<div class="warmth-icon">${iconMarkup}</div><div class="warmth-label">${label}</div>`;
+        btn.onclick = () => {
+          state.warmth = state.warmth === label ? null : label;
+          document.getElementById('warmthDetails').classList.toggle('open', !!state.warmth);
+          renderWarmth();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderLining(){
+      const row = document.getElementById('liningRow');
+      row.innerHTML = '';
+      liningItems.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'mini-chip' + (state.lining === label ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.onclick = () => { state.lining = label; state.thickness = label === '기모' ? '중간' : null; renderLining(); renderThickness(); };
+        row.appendChild(btn);
+      });
+    }
+
+    function renderThickness(){
+      const section = document.getElementById('thicknessSection');
+      const enabled = state.lining === '기모';
+      section.hidden = !enabled;
+      if (!enabled) { state.thickness = null; return; }
+      if (!state.thickness) state.thickness = '중간';
+      const values = ['얇음','중간','도톰'];
+      const range = document.getElementById('thicknessRange');
+      const idx = Math.max(0, values.indexOf(state.thickness));
+      range.value = idx;
+      range.style.setProperty('--fill', `${idx * 50}%`);
+      range.oninput = () => {
+        state.thickness = values[Number(range.value)];
+        renderThickness();
+      };
+    }
+
+    function renderSeasons(){
+      const row = document.getElementById('seasonRow');
+      row.innerHTML = '';
+      seasonItems.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'season-pill' + (state.seasons.has(label) ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.onclick = () => { toggleInSet(state.seasons, label); renderSeasons(); };
+        row.appendChild(btn);
+      });
+    }
+
+    function renderColors(){
+      const grid = document.getElementById('colorGrid');
+      grid.innerHTML = '';
+      colorItems.forEach(([label, value]) => {
+        const btn = document.createElement('button');
+        btn.className = 'color-chip' + (state.color === label ? ' active' : '');
+        btn.type = 'button';
+        let swatchClass = 'swatch';
+        let swatchStyle = '';
+        let inner = '';
+        if(label === '기타') {
+          swatchClass += ' multicolor';
+        } else if(label === '흰색') {
+          swatchClass += ' white';
+        } else {
+          swatchStyle = `background:${value}`;
+        }
+        if(state.color === label && label !== '기타') inner = '<span class="check">✓</span>';
+        btn.innerHTML = `<div class="${swatchClass}" style="${swatchStyle}">${inner}</div><div class="label">${label}</div>`;
+        btn.onclick = () => {
+          state.color = label;
+          if(label !== '기타') state.pattern = '무지';
+          renderColors();
+          renderPatterns();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderPatterns(){
+      const box = document.getElementById('patternBox');
+      const row = document.getElementById('patternRow');
+      const show = state.color === '기타';
+      box.style.display = show ? 'block' : 'none';
+      if(!show) return;
+      row.innerHTML = '';
+      patternItems.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'pattern-chip' + (state.pattern === label ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.onclick = () => { state.pattern = label; renderPatterns(); renderColors(); };
+        row.appendChild(btn);
+      });
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      if(state.photos.length === 0){
+        showToast('사진을 먼저 추가해 주세요');
+        return;
+      }
+      showToast('내 옷장에 저장했어요');
+    });
+
+    renderTpo();
+    renderMainCategories();
+    renderSubCategories();
+    renderWarmth();
+    renderLining();
+    renderThickness();
+    renderSeasons();
+    renderColors();
+    renderPatterns();
+  </script>
+</body>
+</html>
